@@ -8,30 +8,21 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
-
-
-
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.MapGet("/dado/d{numerodefaces}", (
+    [FromRoute] int numerodefaces
+) => {
 
-app.MapGet("/dado/d{numeroDeFaces}", (
+    if(numerodefaces <= 0){
+
+        return Results.BadRequest(new { mensagem = "Somente dados com pelo menos uma face"});
+
+    };
+
+    int face = RandomNumberGenerator.GetInt32(1, numerodefaces + 1);
     
-   [FromRoute] int numeroDeFaces
-    
-    ) => {
-if (numeroDeFaces <= 0)
-{
-    return Results.BadRequest(new {mensagem = "Somente Dados com pelo menos uma Face"});
+    return Results.Ok(new {dado = $"d{numerodefaces}", rolagem = face});
 }
-
-int face =  RandomNumberGenerator.GetInt32(1,numeroDeFaces + 1 );
-
-return Results.Ok (new {dado = $"d{numeroDeFaces}" , rolagem = face });
-
-});
-app.Run();
+);
